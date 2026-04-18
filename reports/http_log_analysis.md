@@ -26,7 +26,7 @@ The logs were ingested in JSON format and analyzed using Splunk’s Search Proce
 
 #### 📸 Screenshot
 
-![Basic Log Search](../screenshots/basic_log_search.png)
+screenshots/ basic_log_search.png
 
 #### 🔎 Query
 
@@ -159,8 +159,3 @@ This analysis demonstrates practical SOC skills such as log investigation, anoma
 
 ---
 
-## 🚀 Future Improvements
-
-* Add alerts
-* Create dashboards
-* Integrate more logs
