@@ -4,7 +4,7 @@
 
 This project demonstrates hands-on HTTP log analysis using Splunk to identify suspicious activities, abnormal traffic patterns, and potential security threats.
 
-The logs were ingested in JSON format and analyzed using Splunk’s Search Processing Language (SPL). The goal is to simulate real-world SOC (Security Operations Center) investigation workflows.
+The logs were ingested in JSON format and analyzed using Splunk’s Search Processing Language (SPL). This simulates real-world SOC (Security Operations Center) investigation workflows.
 
 ---
 
@@ -26,28 +26,21 @@ The logs were ingested in JSON format and analyzed using Splunk’s Search Proce
 
 #### 📸 Screenshot
 
-splunk-soc-lab-/Screenshoot(249).png
+![Basic Log Search](../screenshots/basic_log_search.png)
 
 #### 🔎 Query
 
-```spl
+```spl id="8w7l9k"
 source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 ```
 
 #### 📖 Explanation
 
-This query retrieves all HTTP log events to understand the dataset structure and available fields such as:
-
-* Source IP (`id.orig_h`)
-* Destination IP (`id.resp_h`)
-* HTTP method
-* URI
-* Status code
-* User-Agent
+This query retrieves all HTTP log events and helps understand available fields like source IP, destination IP, URI, status code, and user-agent.
 
 #### 🎯 SOC Insight
 
-Understanding log structure is the first step in any investigation. It helps analysts identify relevant fields for threat detection.
+Helps analysts understand log structure before creating detections.
 
 ---
 
@@ -55,11 +48,11 @@ Understanding log structure is the first step in any investigation. It helps ana
 
 #### 📸 Screenshot
 
-![Large Response](../screenshots/large_response.png)
+![Large HTTP Response](../screenshots/large_http_response.png)
 
 #### 🔎 Query
 
-```spl
+```spl id="6jfrx1"
 source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 resp_body_len > 500000
 | table ts id.orig_h id.resp_h uri resp_body_len
@@ -68,17 +61,13 @@ resp_body_len > 500000
 
 #### 📖 Explanation
 
-Filters HTTP responses with unusually large payload sizes.
+Filters unusually large HTTP responses which may indicate abnormal data transfer.
 
 #### 🚨 SOC Use Case
 
-* Possible **data exfiltration**
+* Data exfiltration
 * Large suspicious downloads
-* Abnormal internal-to-external data transfer
-
-#### 🧠 Finding
-
-Large responses were observed for `/index.html`, indicating potential abnormal data transfer behavior.
+* Abnormal traffic
 
 ---
 
@@ -86,11 +75,11 @@ Large responses were observed for `/index.html`, indicating potential abnormal d
 
 #### 📸 Screenshot
 
-![User Agent](../screenshots/user_agents.png)
+![Suspicious User Agents](../screenshots/suspicious_user_agents.png)
 
 #### 🔎 Query
 
-```spl
+```spl id="g4qz7t"
 source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 user_agent IN ("sqlmap/1.5.1", "curl/7.68.0", "python-requests/2.25.1", "botnet-checker/1.0")
 | stats count by user_agent
@@ -98,18 +87,13 @@ user_agent IN ("sqlmap/1.5.1", "curl/7.68.0", "python-requests/2.25.1", "botnet-
 
 #### 📖 Explanation
 
-Identifies known suspicious or automated tools in HTTP requests.
+Detects automated tools and suspicious scripts interacting with the server.
 
 #### 🚨 SOC Use Case
 
-* SQL injection tools → `sqlmap`
-* Automated scripts → `python-requests`
-* Command-line access → `curl`
-* Botnet indicators → custom agents
-
-#### 🧠 Finding
-
-Multiple suspicious user agents were detected, indicating possible automated or malicious activity.
+* SQL injection testing
+* Automated scanning
+* Bot activity
 
 ---
 
@@ -117,11 +101,11 @@ Multiple suspicious user agents were detected, indicating possible automated or 
 
 #### 📸 Screenshot
 
-![Server Errors](../screenshots/server_errors.png)
+![Server Errors](../screenshots/server_errors_5xx.png)
 
 #### 🔎 Query
 
-```spl
+```spl id="4a3qph"
 source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 status_code >= 500
 | stats count as server_errors
@@ -129,17 +113,7 @@ status_code >= 500
 
 #### 📖 Explanation
 
-Identifies HTTP server-side errors.
-
-#### 🚨 SOC Use Case
-
-* Application crashes
-* Backend failures
-* Attack attempts causing instability
-
-#### 🧠 Finding
-
-A total of **285 server errors** were observed, indicating potential system instability or attack activity.
+Identifies server-side errors which may indicate failures or attacks.
 
 ---
 
@@ -147,11 +121,11 @@ A total of **285 server errors** were observed, indicating potential system inst
 
 #### 📸 Screenshot
 
-![Top IPs](../screenshots/top_ips.png)
+![Top Source IPs](../screenshots/top_source_ips.png)
 
 #### 🔎 Query
 
-```spl
+```spl id="t0c3bj"
 source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 | stats count by id.orig_h
 | sort -count
@@ -160,38 +134,33 @@ source="http_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 
 #### 📖 Explanation
 
-Identifies the most active source IP addresses.
+Shows the most active IP addresses generating traffic.
 
 #### 🚨 SOC Use Case
 
-* Detect **brute-force attempts**
-* Identify **top talkers**
-* Spot unusual traffic spikes
-
-#### 🧠 Finding
-
-Certain IP addresses generated significantly higher traffic, requiring further investigation.
+* Identify attackers
+* Detect abnormal traffic spikes
 
 ---
 
 ## 🧬 MITRE ATT&CK Mapping
 
-This analysis aligns with MITRE ATT&CK techniques:
+Aligned with MITRE ATT&CK:
 
-* **T1190** – Exploit Public-Facing Application
-* **T1071** – Application Layer Protocol
-* **T1046** – Network Service Scanning
+* T1190 – Exploit Public-Facing Application
+* T1071 – Application Layer Protocol
+* T1046 – Network Service Scanning
 
 ---
 
 ## ✅ Conclusion
 
-This project demonstrates how Splunk can be effectively used for:
+This analysis demonstrates practical SOC skills such as log investigation, anomaly detection, and identifying suspicious behavior using Splunk.
 
-* Log analysis and investigation
-* Detection of suspicious activity
-* Monitoring of web traffic
-* Identifying potential security threats
+---
 
-It simulates real SOC analyst responsibilities, including threat detection and incident analysis.
+## 🚀 Future Improvements
 
+* Add alerts
+* Create dashboards
+* Integrate more logs
