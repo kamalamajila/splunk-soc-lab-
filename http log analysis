@@ -1,4 +1,3 @@
-
 # 🌐 HTTP Log Analysis using Splunk
 
 ## 📌 Overview
@@ -196,11 +195,3 @@ This project demonstrates how Splunk can be effectively used for:
 
 It simulates real SOC analyst responsibilities, including threat detection and incident analysis.
 
----
-
-## 🚀 Future Improvements
-
-* Implement real-time alerts for suspicious activities
-* Build interactive dashboards
-* Integrate additional log sources (DNS, system logs)
-* Perform correlation across multiple data sources
