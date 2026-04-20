@@ -1,130 +1,189 @@
-🔐 SSH Log Analysis using Splunk
+# 🔐 SSH Log Analysis using Splunk
 
 This project demonstrates hands-on analysis of SSH logs using Splunk to detect suspicious login activity, brute-force attempts, and abnormal connection patterns.
 
-The logs were ingested in JSON format and analyzed using Splunk’s Search Processing Language (SPL), simulating real-world SOC (Security Operations Center) investigations.
+The logs were ingested in JSON format and analyzed using Splunk’s Search Processing Language (SPL), simulating real-world SOC investigations.
 
-🛠️ Log Source Details
-Field	Value
-Source	ssh_logs.json
-Sourcetype	_json
-Host	DESKTOP-RTB43TD
-🔍 Analysis & Findings
-🔹 1. Basic Log Exploration
-📸 Screenshot
+---
 
-🔎 Query
+## 🛠️ Log Source Details
+
+| Field      | Value           |
+| ---------- | --------------- |
+| Source     | ssh_logs.json   |
+| Sourcetype | _json           |
+| Host       | DESKTOP-RTB43TD |
+
+---
+
+## 🔍 Analysis & Findings
+
+---
+
+### 🔹 1. Basic Log Exploration
+
+#### 📸 Screenshot
+
+![Basic Search](../screenshots/ssh_basic_search.png)
+
+#### 🔎 Query
+
+```spl
 source="ssh_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
-📖 Explanation
+```
+
+#### 📖 Explanation
 
 This query retrieves all SSH log events to understand the dataset structure and key fields such as:
 
-Source IP (id.orig_h)
-Destination IP (id.resp_h)
-Authentication status (auth_success)
-Event type
-Connection details
-🎯 SOC Insight
+* Source IP (`id.orig_h`)
+* Destination IP (`id.resp_h`)
+* Authentication status (`auth_success`)
+* Event type
+* Connection details
 
-Understanding the log structure is the first step in any investigation. It helps identify relevant fields for threat detection.
+#### 🎯 SOC Insight
 
-🔹 2. Failed SSH Login Attempts
-📸 Screenshot
+Understanding the log structure is the first step in any investigation.
 
-🔎 Query
+---
+
+### 🔹 2. Failed SSH Login Attempts
+
+#### 📸 Screenshot
+
+![Failed Logins](../screenshots/ssh_failed_logins.png)
+
+#### 🔎 Query
+
+```spl
 source="ssh_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 auth_success=false
 | stats count as total_failed_attempts
-📖 Explanation
+```
+
+#### 📖 Explanation
 
 Filters logs where authentication failed and counts total failed login attempts.
 
-🚨 SOC Use Case
-Detect brute-force attacks
-Identify repeated login failures
-Monitor unauthorized access attempts
-🧠 Finding
+#### 🚨 SOC Use Case
 
-A total of 608 failed login attempts were observed, indicating potential brute-force activity.
+* Detect brute-force attacks
+* Identify repeated login failures
+* Monitor unauthorized access attempts
 
-🔹 3. Failed Login Attempts by Source IP
-📸 Screenshot
+#### 🧠 Finding
 
-🔎 Query
+A total of **608 failed login attempts** were observed.
+
+---
+
+### 🔹 3. Failed Login Attempts by Source IP
+
+#### 📸 Screenshot
+
+![Failed by IP](../screenshots/ssh_failed_by_ip.png)
+
+#### 🔎 Query
+
+```spl
 source="ssh_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 auth_success=false
 | stats count by id.orig_h
 | sort -count
-📖 Explanation
+```
 
-Groups failed login attempts by source IP to identify attackers generating the most traffic.
+#### 📖 Explanation
 
-🚨 SOC Use Case
-Identify attacking IP addresses
-Detect top brute-force sources
-Prioritize IPs for blocking
-🧠 Finding
+Groups failed login attempts by source IP.
 
-Multiple internal IPs generated high failed login attempts, indicating suspicious activity patterns.
+#### 🚨 SOC Use Case
 
-🔹 4. Event Type Analysis
-📸 Screenshot
+* Identify attacking IPs
+* Detect brute-force sources
+* Prioritize blocking
 
-🔎 Query
+#### 🧠 Finding
+
+Multiple IPs generated high failed login attempts.
+
+---
+
+### 🔹 4. Event Type Analysis
+
+#### 📸 Screenshot
+
+![Event Types](../screenshots/ssh_event_types.png)
+
+#### 🔎 Query
+
+```spl
 source="ssh_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 auth_success=false
 | stats count by event_type
-📖 Explanation
+```
 
-Categorizes failed login events by event type.
+#### 📖 Explanation
 
-🚨 SOC Use Case
-Understand attack behavior
-Differentiate between login failures and brute-force attempts
-🧠 Finding
+Categorizes failed login events by type.
 
-Two major patterns were observed:
+#### 🚨 SOC Use Case
 
-Failed SSH Login
-Multiple Failed Authentication Attempts
+* Understand attack behavior
+* Differentiate attack patterns
 
-This strongly suggests automated attack activity.
+#### 🧠 Finding
 
-🔹 5. Top Attacking IPs
-📸 Screenshot
+* Failed SSH Login
+* Multiple Failed Authentication Attempts
 
-🔎 Query
+---
+
+### 🔹 5. Top Attacking IPs
+
+#### 📸 Screenshot
+
+![Top IPs](../screenshots/ssh_top_ips.png)
+
+#### 🔎 Query
+
+```spl
 source="ssh_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
 auth_success=false
 | stats count by id.orig_h
 | sort -count
 | head 10
-📖 Explanation
+```
 
-Identifies the top 10 IP addresses generating failed login attempts.
+#### 📖 Explanation
 
-🚨 SOC Use Case
-Detect top attackers
-Support incident response
-Feed data into blocklists/firewalls
-🧠 Finding
+Identifies top 10 attacking IPs.
 
-Certain IPs showed significantly higher activity, indicating likely brute-force sources.
+#### 🚨 SOC Use Case
 
-🔗 MITRE ATT&CK Mapping
+* Detect attackers
+* Support incident response
+* Feed firewall rules
 
-This analysis aligns with the following MITRE ATT&CK techniques:
+#### 🧠 Finding
 
-T1110 – Brute Force
-T1078 – Valid Accounts
-T1046 – Network Service Scanning
-✅ Conclusion
+Certain IPs showed significantly higher activity.
 
-This SSH log analysis demonstrates how Splunk can be used to:
+---
 
-Detect brute-force login attempts
-Identify malicious IP activity
-Analyze authentication patterns
-Support real-world SOC investigations
+## 🔗 MITRE ATT&CK Mapping
 
-The project reflects practical SOC analyst workflows including log analysis, anomaly detection, and threat identification.
+* T1110 – Brute Force
+* T1078 – Valid Accounts
+* T1046 – Network Service Scanning
+
+---
+
+## ✅ Conclusion
+
+This SSH log analysis demonstrates how Splunk helps:
+
+* Detect brute-force attacks
+* Identify malicious IPs
+* Analyze authentication patterns
+* Perform SOC investigations
