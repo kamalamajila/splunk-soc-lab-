@@ -147,47 +147,6 @@ Indicates a mix of normal internet and internal DNS activity.
 
 ---
 
-🔹 5. DNS Response Analysis
-
-📸 Screenshot
-![DNS Response Analysis](../screenshots/dns_query_types.png)
-
-🔎 Query
-
-```
-source="dns_logs.json" host="DESKTOP-RTB43TD" sourcetype="_json"
-| stats count by rcode
-```
-
-📖 Explanation
-
-Analyzes DNS response codes.
-
-🚨 SOC Use Case
-
-* Detect failed resolutions
-* Identify suspicious domains
-* Monitor DNS errors
-
-🧠 Finding
-
-Most responses were:
-
-* NOERROR → Successful queries
-
-Indicates stable DNS resolution behavior.
-
----
-
-🔗 MITRE ATT&CK Mapping
-
-This analysis aligns with:
-
-* T1046 – Network Service Scanning
-* T1071.004 – Application Layer Protocol (DNS)
-* T1568 – Dynamic Resolution
-
----
 
 ✅ Conclusion
 
